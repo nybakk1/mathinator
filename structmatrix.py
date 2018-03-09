@@ -31,7 +31,8 @@ d = 0.03  # Thickness
 E = 1.3 * (10 ** 10)  # Young’s modulus of the wood
 I = (w * (d ** 3))/12  # The area moment of inertia I around the center of mass of a beam
 g = 9.81  # Gravitational force
-weight = -480 * w * d * g  # Weight of a slice of the diving board
-b = [(weight * h4)/(E * I)]*n  # The b-vector
+force = (-480 * w * d * g * L) / n  # Force acting on a slice of the diving board
+b = [(force * h4)/(E * I)]*n  # The b-vector
+b[9] = ((force + 750)*h4)/(E * I)
 y = spsolve(A, b)  # Solving the matrix
 print(y)
