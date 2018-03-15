@@ -35,9 +35,17 @@ b = [(force * h4)/(E * I)]*n  # The b-vector
 y = spsolve(A, b)  # Solving the matrix
 print(y)
 
-
-# y(x) = (f/24EI)x^2(x^2 − 4Lx + 6L^2)
 R = []
 for i in range(1, 11):
-    R.append((force/(24*E*I)*(i/10)**2-8*(i/10)**2+24)*(1/h4))
+    R.append((force/(24*E*I)*(i/10)**2-8*(i/10)**2+24))
 print(R)
+
+A = lagA(10)
+Ye = [-0.00036125, -0.00013497, -0.00028340, -0.00046982, -0.00068419,
+      -0.000918, -0.0011643, -0.0014177, -0.0016743, -0.0019318]
+b = A.dot(R)
+b = b * (1/h4)
+print(b)
+
+
+
