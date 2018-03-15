@@ -20,7 +20,6 @@ def lagA(n):
 
     return A.tocsr()
 
-
 L = 2.00  # Length of the beam
 n = 10  # Number of segments
 A = lagA(n)  # Creating the A matrix
@@ -33,6 +32,12 @@ I = (w * (d ** 3))/12  # The area moment of inertia I around the center of mass 
 g = 9.81  # Gravitational force
 force = (-480 * w * d * g * L) / n  # Force acting on a slice of the diving board
 b = [(force * h4)/(E * I)]*n  # The b-vector
-b[9] = ((force + 750)*h4)/(E * I)
 y = spsolve(A, b)  # Solving the matrix
 print(y)
+
+
+# y(x) = (f/24EI)x^2(x^2 − 4Lx + 6L^2)
+R = []
+for i in range(1, 11):
+    R.append((force/(24*E*I)*(i/10)**2-8*(i/10)**2+24)*(1/h4))
+print(R)
