@@ -31,21 +31,21 @@ E = 1.3 * (10 ** 10)  # Young’s modulus of the wood
 I = (w * (d ** 3))/12  # The area moment of inertia I around the center of mass of a beam
 g = 9.81  # Gravitational force
 force = (-480 * w * d * g * L) / n  # Force acting on a slice of the diving board
-b = [(force * h4)/(E * I)]*n  # The b-vector
-y = spsolve(A, b)  # Solving the matrix
-print(y)
+b1 = [(force * h4)/(E * I)]*n  # The b-vector
+y = spsolve(A, b1)  # Solving the matrix
+# print(y)
+print(b1)
 
 R = []
 for i in range(1, 11):
-    R.append((force/(24*E*I)*(i/10)**2-8*(i/10)**2+24))
-print(R)
+    R.append(((force/(24*E*I)*((i/5)**2)*((i/5)**2 - 8*(i/5)+24))))
 
 A = lagA(10)
-Ye = [-0.00036125, -0.00013497, -0.00028340, -0.00046982, -0.00068419,
-      -0.000918, -0.0011643, -0.0014177, -0.0016743, -0.0019318]
-b = A.dot(R)
-b = b * (1/h4)
-print(b)
+b2 = A.dot(R)
+b2 = b2 * (1/h4)
+print(b2)
+
+print(b2[0]/b1[0])
 
 
 
