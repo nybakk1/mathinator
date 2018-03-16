@@ -46,9 +46,9 @@ b1 = [(force * h4)/(E * I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 # print(b1)
 
-R = []
+R = sp.ones(segments)
 for i in range(1, 11):
-    R.append(force / (24 * E * I) * ((i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
+    R[i - 1] = (force/(24*E*I)*((i/5)**2)*((i/5)**2 - 8*(i/5)+24))
 
 A = create_matrix(10)
 b2 = A.dot(R)
@@ -58,7 +58,8 @@ b2 = A.dot(R)
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
 for i in range(0, segments):
-    temp[i] = (abs(b2[i] - b1[i]))  # TODO: Consider using absolution function from numpy or scipy.
+    temp[i] = (abs(b2[i] - b1[i]))
 
 print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
+print("Foroverfeil (4d): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
