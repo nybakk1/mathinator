@@ -2,6 +2,7 @@
 
 import scipy as sp
 import numpy as np
+import math as ma
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -52,26 +53,37 @@ for i in range(1, 11):
 
 A = create_matrix(10)
 b2 = A.dot(R)
-# b2 = b2 * (1/h4)
-# print(b2)
-
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i]))
 
-print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
-print("Cond(A): ", norm(A) * norm(inv(A)))
-print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
+# print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
+# print("Cond(A): ", norm(A) * norm(inv(A)))
+# print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
 
 for i in range(1, 12):
     segments = 10 * 2 ** i
     segm_len = length / segments  # Length of each segment
     h4 = segm_len ** 4
     A = create_matrix(segments)
-    cond = norm(A) * norm(inv(A))
+    # cond = norm(A) * norm(inv(A))
     b = [(force * h4)/(E * I)] * segments
     y = spsolve(A, b)
-    print("Cond(A)", cond)
-    print(abs(y[-1] - R[-1]))
+    # print(cond)
+    # print(abs(y[-1] - R[-1]))
+
+for i in range(1, 12):
+    segments = 10 * 2 ** i
+    segm_len = length / segments
+    h4 = segm_len ** 4
+    A = create_matrix(segments)
+    p = 100
+    g = 9.81
+    b = sp.ones(segments)
+    for j in range(0, segments):
+        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j)/ length))*h4) / (E * I)
+    y = spsolve(A, b)
+    R1 = ((force*4)/24*E*I)*(4-16+24)-((9.81*100*2)/(E*I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
+    # print(abs(y[-1] - R1))
 
