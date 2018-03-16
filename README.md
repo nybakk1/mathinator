@@ -2,7 +2,7 @@
 
 <b>Mathinator</b> is a repository for a mathematics project in numerical
 analysis. By computer engineering students at NTNU Trondheim.
-<br><br>
+<br>
 This project looks at numerical analysis of a diving board with
 different amount of weight distributed differently across the board.
 The project is for use with Python v3.6.
