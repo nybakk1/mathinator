@@ -8,6 +8,7 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import spsolve
 from scipy.sparse.linalg import norm
 from scipy.sparse.linalg import inv
+from entities.DivingBoard import DivingBoard
 
 
 def create_matrix(n):
@@ -31,24 +32,20 @@ def create_matrix(n):
     return A.tocsc()
 
 
-length = 2.00   # Length of the beam
+divingBoard = DivingBoard(2.00, 0.30, 0.03)
 segments = 10   # Number of segments
 A = create_matrix(segments)     # Creating the A matrix
-segm_len = length / segments    # Length of each segment
+segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
-width = 0.30    # Width
-d = 0.03        # Thickness
-E = 1.3 * (10 ** 10)    # Young’s modulus of the wood
-I = (width * (d ** 3)) / 12     # The area moment of inertia I around the center of mass of a beam
 g = 9.81    # Gravitational force
-force = (-480 * width * d * g * length) / segments  # Force acting on a slice of the diving board
-b1 = [(force * h4)/(E * I)] * segments  # The b-vector
+force = (-480 * divingBoard.width * divingBoard.thickness * g * divingBoard.length) / segments  # Force acting on a slice of the diving board
+b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 # print(b1)
 
 R = sp.ones(segments)
 for i in range(1, 11):
-    R[i - 1] = (force/(24*E*I)*((i/5)**2)*((i/5)**2 - 8*(i/5)+24))
+    R[i - 1] = (force / (24 * divingBoard.E * divingBoard.I) * ((i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
 
 A = create_matrix(10)
 b2 = A.dot(R)
@@ -62,16 +59,15 @@ for i in range(0, segments):
 
 print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
-print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
+print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1) / 2 ** -52, "maskinepsilon")
 
 for i in range(1, 12):
     segments = 10 * 2 ** i
-    segm_len = length / segments  # Length of each segment
+    segm_len = divingBoard.length / segments  # Length of each segment
     h4 = segm_len ** 4
     A = create_matrix(segments)
-    cond = norm(A) * norm(inv(A))
-    b = [(force * h4)/(E * I)] * segments
+    # cond = norm(A) * norm(inv(A))
+    b = [(force * h4)/(divingBoard.E * I)] * segments
     y = spsolve(A, b)
-    print("Cond(A)", cond)
+    # print("Cond(A)", cond)
     print(abs(y[-1] - R[-1]))
-
