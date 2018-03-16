@@ -62,4 +62,16 @@ for i in range(0, segments):
 
 print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
-print("Foroverfeil (4d): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
+print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
+
+for i in range(1, 12):
+    segments = 10 * 2 ** i
+    segm_len = length / segments  # Length of each segment
+    h4 = segm_len ** 4
+    A = create_matrix(segments)
+    cond = norm(A) * norm(inv(A))
+    b = [(force * h4)/(E * I)] * segments
+    y = spsolve(A, b)
+    print("Cond(A)", cond)
+    print(abs(y[-1] - R[-1]))
+
