@@ -1,6 +1,5 @@
 import scipy as sp
 import numpy as np
-import math as ma
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -53,6 +52,6 @@ tempx = sp.ones(n)
 for i in range (0, n):
     temp[i] = (abs(b2[i]-b1[i]))
 
-print("Feilforstørring: ", (np.linalg.norm(temp, 3)/np.linalg.norm(b2, 3))/ma.pow(2, -52))
+print("Feilforstørring: ", (np.linalg.norm(temp, 3)/np.linalg.norm(b2, 3))/2**-52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
 
