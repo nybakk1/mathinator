@@ -1,8 +1,12 @@
 import scipy as sp
+import numpy as np
+import math as ma
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import spsolve
+from scipy.sparse.linalg import norm
+from scipy.sparse.linalg import inv
 
 
 def lagA(n):
@@ -18,7 +22,7 @@ def lagA(n):
     A[n-2, n-4:n] = B[1, :]
     A[n-1, n-4:n] = B[2, :]
 
-    return A.tocsr()
+    return A.tocsc()
 
 L = 2.00  # Length of the beam
 n = 10  # Number of segments
@@ -33,19 +37,22 @@ g = 9.81  # Gravitational force
 force = (-480 * w * d * g * L) / n  # Force acting on a slice of the diving board
 b1 = [(force * h4)/(E * I)]*n  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
-# print(y)
-print(b1)
+# print(b1)
 
 R = []
 for i in range(1, 11):
-    R.append(((force/(24*E*I)*((i/5)**2)*((i/5)**2 - 8*(i/5)+24))))
+    R.append(force/(24*E*I)*((i/5)**2)*((i/5)**2 - 8*(i/5)+24))
 
 A = lagA(10)
 b2 = A.dot(R)
-b2 = b2 * (1/h4)
-print(b2)
+# b2 = b2 * (1/h4)
+# print(b2)
 
-print(b2[0]/b1[0])
+temp = sp.ones(n)
+tempx = sp.ones(n)
+for i in range (0, n):
+    temp[i] = (abs(b2[i]-b1[i]))
 
-
+print("Feilforstørring: ", (np.linalg.norm(temp, 3)/np.linalg.norm(b2, 3))/ma.pow(2, -52))
+print("Cond(A): ", norm(A) * norm(inv(A)))
 
