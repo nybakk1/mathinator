@@ -32,16 +32,17 @@ def create_matrix(n):
     return A.tocsc()
 
 
-divingBoard = DivingBoard(2.00, 0.30, 0.03)
+# Constants
+g = 9.81        # Gravitational force in m/s^2.
 segments = 10   # Number of segments
+
+divingBoard = DivingBoard(2.00, 0.30, 0.03)
 A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
-g = 9.81    # Gravitational force
 force = (-480 * divingBoard.width * divingBoard.thickness * g * divingBoard.length) / segments  # Force acting on a slice of the diving board
 b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
-# print(b1)
 
 R = sp.ones(segments)
 for i in range(1, 11):
@@ -49,8 +50,6 @@ for i in range(1, 11):
 
 A = create_matrix(10)
 b2 = A.dot(R)
-# b2 = b2 * (1/h4)
-# print(b2)
 
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
@@ -67,7 +66,7 @@ for i in range(1, 12):
     h4 = segm_len ** 4
     A = create_matrix(segments)
     # cond = norm(A) * norm(inv(A))
-    b = [(force * h4)/(divingBoard.E * I)] * segments
+    b = [(force * h4)/(divingBoard.E * divingBoard.I)] * segments
     y = spsolve(A, b)
     # print("Cond(A)", cond)
     print(abs(y[-1] - R[-1]))
