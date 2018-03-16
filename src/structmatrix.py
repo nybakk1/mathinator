@@ -70,21 +70,21 @@ for i in range(1, 12):
     b = [(force * h4)/(divingBoard.E * divingBoard.I)] * segments
     y = spsolve(A, b)
     # print("Cond(A)", cond)
-    print(abs(y[-1] - R[-1]))
+    # print(abs(y[-1] - R[-1]))
     # print(cond)
     # print(abs(y[-1] - R[-1]))
 
 for i in range(1, 12):
     segments = 10 * 2 ** i
-    segm_len = length / segments
+    segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
     p = 100
     g = 9.81
     b = sp.ones(segments)
     for j in range(0, segments):
-        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j)/ length))*h4) / (E * I)
+        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j)/ divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
     y = spsolve(A, b)
-    R1 = ((force*4)/24*E*I)*(4-16+24)-((9.81*100*2)/(E*I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
-    # print(abs(y[-1] - R1))
+    R1 = ((force*4)/24*divingBoard.E*divingBoard.I)*(4-16+24)-((9.81*100*2)/(divingBoard.E*divingBoard.I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
+    print(abs(y[-1] - R1))
 
