@@ -3,6 +3,7 @@
 import scipy as sp
 import numpy as np
 import math as ma
+import matplotlib.pyplot as pl
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -47,7 +48,7 @@ y = spsolve(A, b1)  # Solving the matrix
 
 R = sp.ones(segments)
 for i in range(1, 11):
-    R[i - 1] = (force / (24 * divingBoard.E * divingBoard.I) * ((i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
+    R[i - 1] = (((force / (24 * divingBoard.E * divingBoard.I)) * (i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
 
 A = create_matrix(10)
 b2 = A.dot(R)
@@ -71,11 +72,16 @@ for i in range(1, 12):
     y = spsolve(A, b)
     # print("Cond(A)", cond)
     # print(abs(y[-1] - R[-1]))
-    # print(cond)
-    # print(abs(y[-1] - R[-1]))
 
+X = sp.ones(11)
+Y = sp.ones(11)
+R1 = sp.ones(11)
+Z = sp.ones(11)
+Cond = sp.ones(11)
+H2 = sp.ones(11)
 for i in range(1, 12):
     segments = 10 * 2 ** i
+    X[i-1] = segments
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
@@ -83,8 +89,21 @@ for i in range(1, 12):
     g = 9.81
     b = sp.ones(segments)
     for j in range(0, segments):
-        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j)/ divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
+        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
     y = spsolve(A, b)
-    R1 = ((force*4)/24*divingBoard.E*divingBoard.I)*(4-16+24)-((9.81*100*2)/(divingBoard.E*divingBoard.I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
-    print(abs(y[-1] - R1))
+    if i < 9:
+        Cond[i-1] = norm(A) * norm(inv(A)) * 2**-52
+    else:
+        Cond[i-1] = 0
+    R1[i-1] = ((force*4)/(24*divingBoard.E*divingBoard.I))*(4-16+24)-((9.81*100*2) /
+            (divingBoard.E*divingBoard.I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
+    Z[i-1] = abs(y[-1] - R1[i-1])
+    Y[i-1] = (y[-1])
+    H2[i-1] = 4/(segments**2)
 
+# pl.plot(X, Y)  # Oppgave 6b
+# pl.plot(X, R1)  # Oppgave 6b
+pl.plot(np.log(X), np.log(Z))  # Oppgave 6c
+pl.plot(np.log(X), np.log(Cond))
+pl.plot(np.log(X), np.log(H2))
+pl.show()
