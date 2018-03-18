@@ -62,16 +62,12 @@ for i in range(0, segments):
 # print("Cond(A): ", norm(A) * norm(inv(A)))
 # print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
 
-# cond5 = sp.ones(11)
-# X5 = sp.ones(11)
-# Y5 = sp.ones(11)
-# Z5 = sp.ones(11)
-# H5 = sp.ones(11)
-# R5 = sp.ones(11)
+Segment = sp.ones(11)
+error = sp.ones(11)
+kondisjon = sp.ones(11)
 
 for i in range(1, 12):
     segments = 10 * 2 ** i
-    # X5[i-1] = segments
     segm_len = divingBoard.length / segments  # Length of each segment
     h4 = segm_len ** 4
     A = create_matrix(segments)
@@ -81,14 +77,13 @@ for i in range(1, 12):
         cond = 0
     b = [(force * h4)/(divingBoard.E * divingBoard.I)] * segments
     y = spsolve(A, b)
-    # cond5[i-1] = cond * (2 ** -52)
-    # R5[i - 1] = ((force * 4) / (24 * divingBoard.E * divingBoard.I)) * (4 - 16 + 24)
-    # Y5[i-1] = y[-1]
-    # Z5[i - 1] = abs(y[-1] - R5[i - 1])
-    # H5[i-1] = 4/(segments**2)
-    # print("Cond(A)", cond)
-    # print(abs(y[-1] - R[-1]))
+    kondisjon[i-1] = cond
+    Segment[i-1] = segments
+    error[i-1] = abs(y[-1] - R[-1])
 
+print(Segment)
+print(kondisjon)
+print(error)
 # pl.plot(np.log(X5), np.log(Z5))  # Oppgave 6c and 6d
 # pl.plot(np.log(X5), np.log(cond5)) # Oppgave 6d
 # pl.plot(np.log(X5), np.log(H5))  # Oppgave 6d
@@ -129,7 +124,7 @@ pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
 pl.show()
 
 
-for i in range(1, 2):
+for i in range(1, 12):
     segments = 10000
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
