@@ -15,9 +15,9 @@ from entities.DivingBoard import DivingBoard
 
 def create_matrix(n):
     """
-    Create a CSR matrix.
+    Create a CSC matrix.
     :param n: Width and height of CSR matrix.
-    :return: A CSR matrix
+    :return: A CSC matrix
     """
     e = sp.ones(n)
     A = spdiags([e, -4*e, 6*e, -4*e, e], [-2, -1, 0, 1, 2], n, n)
@@ -52,15 +52,16 @@ for i in range(1, 11):
 
 A = create_matrix(10)
 b2 = A.dot(R)
-
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i]))
 
+print("Foroverfeil: ", np.linalg.norm(temp))
+# print("Relativ foroverfeil: ", np.linalg.norm(temp)/np.linalg.norm(b2))
 # print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
 # print("Cond(A): ", norm(A) * norm(inv(A)))
-# print("Foroverfeil (4e): ", np.linalg.norm(R - y, 1)/2**-52, "maskinepsilon")
+# print("Foroverfeil (4e): ", np.linalg.norm(abs(R - y), 1)/2**-52, "maskinepsilon")
 
 Segment = sp.ones(11)
 error = sp.ones(11)
@@ -81,9 +82,6 @@ for i in range(1, 12):
     Segment[i-1] = segments
     error[i-1] = abs(y[-1] - R[-1])
 
-print(Segment)
-print(kondisjon)
-print(error)
 # pl.plot(np.log(X5), np.log(Z5))  # Oppgave 6c and 6d
 # pl.plot(np.log(X5), np.log(cond5)) # Oppgave 6d
 # pl.plot(np.log(X5), np.log(H5))  # Oppgave 6d
@@ -118,10 +116,10 @@ for i in range(1, 12):
     H2[i-1] = 4/(segments**2)
 # pl.plot(X, Y)  # Oppgave 6b
 # pl.plot(X, R1)  # Oppgave 6b
-pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
-pl.plot(np.log(X), np.log(Cond)) # Oppgave 6d
-pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
-pl.show()
+# pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
+# pl.plot(np.log(X), np.log(Cond)) # Oppgave 6d
+# pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
+# pl.show()
 
 
 for i in range(1, 12):
