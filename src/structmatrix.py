@@ -4,6 +4,7 @@ import scipy as sp
 import numpy as np
 import math as ma
 import matplotlib.pyplot as pl
+import matplotlib.patches as mpatches
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -44,7 +45,7 @@ A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
 force = (-480 * divingBoard.width * divingBoard.thickness * g)  # Force acting on a slice of the diving board
-b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
+b1 = [(force) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
 
@@ -125,14 +126,21 @@ for i in range(1, 12):
     Z[i-1] = abs(y[-1] - R1[i-1])
     Y[i-1] = (y[-1])
     H2[i-1] = 4/(segments**2)
-# pl.plot(X, Y)  # Oppgave 6b
-# pl.plot(X, R1)  # Oppgave 6b
-pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
-pl.plot(np.log(X), np.log(Cond))  # Oppgave 6d
-pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
+
+pl.plot(X, Y, label = 'Beregnet verdi')  # Oppgave 6b
+pl.plot(X, R1, label = 'Eksakt verdi')  # Oppgave 6b
 pl.show()
 
+pl.plot(np.log(X), np.log(Z), label='Beregnet feil')  # Oppgave 6c and 6d
+pl.plot(np.log(X), np.log(Cond), label='Kondisjonstall')  # Oppgave 6d
+pl.plot(np.log(X), np.log(H2), label='Teoretisk feil')  # Oppgave 6d
 
+pl.legend(bbox_to_anchor=(1, 1),
+           bbox_transform=pl.gcf().transFigure)
+
+pl.show()
+
+print("Oppgave 7")
 for i in range(1, 12):
     segments = 10000
     segm_len = divingBoard.length / segments
@@ -160,4 +168,4 @@ for i in range(1, 12):
         segm_start += segm_len
         segm_stop += segm_len
     y = spsolve(A, b)
-    # print(y[-1])
+    print(y[-1])
