@@ -34,7 +34,6 @@ def create_matrix(n):
 
     return A.tocsc()
 
-
 print("Oppgave 3: ")
 # Constants
 g = 9.81        # Gravitational force in m/s^2.
@@ -60,6 +59,7 @@ for i in range(1, 11):
 
 A = create_matrix(10)
 b2 = 1/h4 * A.dot(R)
+print(b2)
 
 # Eksakt løsning for den fjerdederiverte.
 print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.00482953846153537283 -0.00482953846154242014 -0.00482953846153212022 -0.00482953846154404644 -0.00482953846152886761 -0.00482953846154513065 -0.00482953846153754123 -0.00482953846153970964]
@@ -67,7 +67,7 @@ print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.004829538461535
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
 for i in range(0, segments):
-    temp[i] = (abs(b2[i] - b1[i]))
+    temp[i] = (abs(b2[i] - b1[i] * 1/h4))
 
 print("\nOppgave 4d: ")
 print("Foroverfeil: ", np.linalg.norm(temp))
@@ -85,7 +85,7 @@ for i in range(1, 12):
     segm_len = divingBoard.length / segments  # Length of each segment
     h4 = segm_len ** 4
     A = create_matrix(segments)
-    if i < 9:
+    if i < 9:  #
         cond = norm(A) * norm(inv(A))
     else:
         cond = 0
@@ -113,6 +113,7 @@ for i in range(1, 12):
     h4 = segm_len ** 4
     A = create_matrix(segments)
     p = 100
+    g = 9.81
     b = sp.ones(segments)
     for j in range(0, segments):
         b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * (j+1)) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
@@ -146,6 +147,7 @@ for i in range(1, 12):
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
+    g = 9.81
     b = sp.ones(segments)
     segm_start = 0
     segm_stop = segm_len
