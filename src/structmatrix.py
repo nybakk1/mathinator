@@ -4,6 +4,7 @@ import scipy as sp
 import numpy as np
 import math as ma
 import matplotlib.pyplot as pl
+import matplotlib.patches as mpatches
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -43,7 +44,7 @@ A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
 force = (-480 * divingBoard.width * divingBoard.thickness * g)  # Force acting on a slice of the diving board
-b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
+b1 = [(force) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
 
@@ -133,15 +134,21 @@ for i in range(1, 12):
     Y[i-1] = (y[-1])
     H2[i-1] = 4/(segments**2)
 
-pl.plot(X, Y)  # Oppgave 6b
-pl.plot(X, R1)  # Oppgave 6b
-pl.show()
-pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
-pl.plot(np.log(X), np.log(Cond))  # Oppgave 6d
-pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
+pl.plot(X, Y, label = 'Beregnet verdi')  # Oppgave 6b
+pl.plot(X, R1, label = 'Eksakt verdi')  # Oppgave 6b
 pl.show()
 
 Y = sp.ones(11)
+pl.plot(np.log(X), np.log(Z), label='Beregnet feil')  # Oppgave 6c and 6d
+pl.plot(np.log(X), np.log(Cond), label='Kondisjonstall')  # Oppgave 6d
+pl.plot(np.log(X), np.log(H2), label='Teoretisk feil')  # Oppgave 6d
+
+pl.legend(bbox_to_anchor=(1, 1),
+           bbox_transform=pl.gcf().transFigure)
+
+pl.show()
+
+print("Oppgave 7")
 for i in range(1, 12):
     segments = 10 * 2 ** i
     segm_len = divingBoard.length / segments
@@ -161,6 +168,8 @@ for i in range(1, 12):
                 b[j] = ((force - (f_pers/(segm_stop - 1.7)) * h4) / (divingBoard.E * divingBoard.I))
         else:
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
+
+        # if segm_stop < 1.70 + TOL and segm_stop > 1.70 - TOL:
         if 1.70 - TOL < segm_stop < 1.70 + TOL:
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
         if 1.70 - TOL < segm_start < 1.70 + TOL:
