@@ -33,6 +33,7 @@ def create_matrix(n):
 
     return A.tocsc()
 
+
 print("Oppgave 3: ")
 # Constants
 g = 9.81        # Gravitational force in m/s^2.
@@ -42,7 +43,7 @@ divingBoard = DivingBoard(2.00, 0.30, 0.03)
 A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
-force = (-480 * divingBoard.width * divingBoard.thickness * g) # Force acting on a slice of the diving board
+force = (-480 * divingBoard.width * divingBoard.thickness * g)  # Force acting on a slice of the diving board
 b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
@@ -67,15 +68,13 @@ tempx = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i]))
 
-print()
-print("Oppgave 4d: ")
+print("\nOppgave 4d: ")
 print("Foroverfeil: ", np.linalg.norm(temp))
 print("Relativ foroverfeil: ", np.linalg.norm(temp)/np.linalg.norm(b2))
 print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
 
-print()
-print("Oppgave 4e: ")
+print("\nOppgave 4e: ")
 print("Foroverfeil: ", np.linalg.norm(abs(R - y), np.inf)/2**-52, "maskinepsilon")
 
 err = sp.ones(11)
@@ -94,8 +93,7 @@ for i in range(1, 12):
     err[i - 1] = abs(R[-1] - y[-1])
     Cond[i - 1] = cond
 
-print()
-print("Oppgave 5:")
+print("\nOppgave 5:")
 print(err)
 print(Cond)
 
@@ -114,7 +112,6 @@ for i in range(1, 12):
     h4 = segm_len ** 4
     A = create_matrix(segments)
     p = 100
-    g = 9.81
     b = sp.ones(segments)
     for j in range(0, segments):
         b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
@@ -123,7 +120,7 @@ for i in range(1, 12):
         Cond[i-1] = norm(A) * norm(inv(A)) * 2**-52
     else:
         Cond[i-1] = 0
-    R1[i-1] = ((force*4)/(24*divingBoard.E*divingBoard.I))*(4-16+24)-((9.81*100*2) /
+    R1[i-1] = ((force*4)/(24*divingBoard.E*divingBoard.I))*(4-16+24)-((g*100*2) /
             (divingBoard.E*divingBoard.I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
     Z[i-1] = abs(y[-1] - R1[i-1])
     Y[i-1] = (y[-1])
@@ -131,7 +128,7 @@ for i in range(1, 12):
 # pl.plot(X, Y)  # Oppgave 6b
 # pl.plot(X, R1)  # Oppgave 6b
 pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
-pl.plot(np.log(X), np.log(Cond)) # Oppgave 6d
+pl.plot(np.log(X), np.log(Cond))  # Oppgave 6d
 pl.plot(np.log(X), np.log(H))  # Oppgave 6d
 pl.show()
 
@@ -141,7 +138,6 @@ for i in range(1, 12):
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
-    g = 9.81
     b = sp.ones(segments)
     segm_start = 0
     segm_stop = segm_len
