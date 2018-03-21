@@ -33,7 +33,7 @@ def create_matrix(n):
 
     return A.tocsc()
 
-
+print("Oppgave 3: ")
 # Constants
 g = 9.81        # Gravitational force in m/s^2.
 segments = 10   # Number of segments
@@ -45,28 +45,41 @@ h4 = segm_len ** 4
 force = (-480 * divingBoard.width * divingBoard.thickness * g) # Force acting on a slice of the diving board
 b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
+np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
 
+# Eksakt løsning for y
+print(y)  # [-0.00018062473846150817 -0.00067484750769219038 -0.00141698658461512916 -0.00234908750769186828 -0.00342092307692241438 -0.00458999335384523578 -0.00582152566153726261 -0.00708847458461388680 -0.00837152196922896080 -0.00965907692307479970]
+
+print()
+print("Oppgave 4c: ")
 R = sp.ones(segments)
 for i in range(1, 11):
     R[i - 1] = (((force / (24 * divingBoard.E * divingBoard.I)) * (i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
 
 A = create_matrix(10)
-b2 = A.dot(R)
+b2 = 1/h4 * A.dot(R)
+
+# Eksakt løsning for den fjerdederiverte.
+print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.00482953846153537283 -0.00482953846154242014 -0.00482953846153212022 -0.00482953846154404644 -0.00482953846152886761 -0.00482953846154513065 -0.00482953846153754123 -0.00482953846153970964]
+
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i]))
 
+print()
+print("Oppgave 4d: ")
 print("Foroverfeil: ", np.linalg.norm(temp))
-# print("Relativ foroverfeil: ", np.linalg.norm(temp)/np.linalg.norm(b2))
-# print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
-# print("Cond(A): ", norm(A) * norm(inv(A)))
-# print("Foroverfeil (4e): ", np.linalg.norm(abs(R - y), 1)/2**-52, "maskinepsilon")
+print("Relativ foroverfeil: ", np.linalg.norm(temp)/np.linalg.norm(b2))
+print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
+print("Cond(A): ", norm(A) * norm(inv(A)))
 
-Segment = sp.ones(11)
-error = sp.ones(11)
-kondisjon = sp.ones(11)
+print()
+print("Oppgave 4e: ")
+print("Foroverfeil: ", np.linalg.norm(abs(R - y), np.inf)/2**-52, "maskinepsilon")
 
+err = sp.ones(11)
+Cond = sp.ones(11)
 for i in range(1, 12):
     segments = 10 * 2 ** i
     segm_len = divingBoard.length / segments  # Length of each segment
@@ -78,14 +91,13 @@ for i in range(1, 12):
         cond = 0
     b = [(force * h4)/(divingBoard.E * divingBoard.I)] * segments
     y = spsolve(A, b)
-    kondisjon[i-1] = cond
-    Segment[i-1] = segments
-    error[i-1] = abs(y[-1] - R[-1])
+    err[i - 1] = abs(R[-1] - y[-1])
+    Cond[i - 1] = cond
 
-# pl.plot(np.log(X5), np.log(Z5))  # Oppgave 6c and 6d
-# pl.plot(np.log(X5), np.log(cond5)) # Oppgave 6d
-# pl.plot(np.log(X5), np.log(H5))  # Oppgave 6d
-# pl.show()
+print()
+print("Oppgave 5:")
+print(err)
+print(Cond)
 
 X = sp.ones(11)
 Y = sp.ones(11)
@@ -93,9 +105,11 @@ R1 = sp.ones(11)
 Z = sp.ones(11)
 Cond = sp.ones(11)
 H2 = sp.ones(11)
+H = sp.ones(11)
 for i in range(1, 12):
     segments = 10 * 2 ** i
     X[i-1] = segments
+    H[i - 1] = divingBoard.length / segments
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
@@ -116,10 +130,10 @@ for i in range(1, 12):
     H2[i-1] = 4/(segments**2)
 # pl.plot(X, Y)  # Oppgave 6b
 # pl.plot(X, R1)  # Oppgave 6b
-# pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
-# pl.plot(np.log(X), np.log(Cond)) # Oppgave 6d
-# pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
-# pl.show()
+pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
+pl.plot(np.log(X), np.log(Cond)) # Oppgave 6d
+pl.plot(np.log(X), np.log(H))  # Oppgave 6d
+pl.show()
 
 
 for i in range(1, 12):
