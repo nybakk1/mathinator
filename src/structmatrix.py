@@ -65,8 +65,12 @@ print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.004829538461535
 
 temp = sp.ones(segments)
 tempx = sp.ones(segments)
+nyB1 = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i] * 1/h4))
+    nyB1[i] = b1[i] / h4
+
+print("nyB1: ", nyB1)
 
 print("\nOppgave 4d: ")
 print("Foroverfeil: ", np.linalg.norm(temp))
@@ -94,7 +98,9 @@ for i in range(1, 12):
     Cond[i - 1] = cond
 
 print("\nOppgave 5:")
+print("\nError:")
 print(err)
+print("\nKondisjon:")
 print(Cond)
 
 X = sp.ones(11)
@@ -120,22 +126,24 @@ for i in range(1, 12):
     if i < 9:
         Cond[i-1] = norm(A) * norm(inv(A)) * 2**-52
     else:
-        Cond[i-1] = 0
+        Cond[i-1] = 0.1  # To avoid dividing by zero.
     R1[i-1] = ((force*4)/(24*divingBoard.E*divingBoard.I))*(4-16+24)-((g*100*2) /
             (divingBoard.E*divingBoard.I*ma.pi))*(8/(ma.pi**3)*ma.sin(ma.pi)-8/6+8/2-8/(ma.pi**2))
     Z[i-1] = abs(y[-1] - R1[i-1])
     Y[i-1] = (y[-1])
     H2[i-1] = 4/(segments**2)
-# pl.plot(X, Y)  # Oppgave 6b
-# pl.plot(X, R1)  # Oppgave 6b
+
+pl.plot(X, Y)  # Oppgave 6b
+pl.plot(X, R1)  # Oppgave 6b
+pl.show()
 pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
 pl.plot(np.log(X), np.log(Cond))  # Oppgave 6d
 pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
 pl.show()
 
-
+Y = sp.ones(11)
 for i in range(1, 12):
-    segments = 10000
+    segments = 10 * 2 ** i
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
@@ -153,8 +161,6 @@ for i in range(1, 12):
                 b[j] = ((force - (f_pers/(segm_stop - 1.7)) * h4) / (divingBoard.E * divingBoard.I))
         else:
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
-
-        # if segm_stop < 1.70 + TOL and segm_stop > 1.70 - TOL:
         if 1.70 - TOL < segm_stop < 1.70 + TOL:
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
         if 1.70 - TOL < segm_start < 1.70 + TOL:
@@ -162,4 +168,7 @@ for i in range(1, 12):
         segm_start += segm_len
         segm_stop += segm_len
     y = spsolve(A, b)
-    # print(y[-1])
+    Y[i - 1] = y[-1]
+
+print("Oppgave 7: ")
+print(Y)
