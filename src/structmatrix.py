@@ -44,7 +44,7 @@ A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
 force = (-480 * divingBoard.width * divingBoard.thickness * g)  # Force acting on a slice of the diving board
-b1 = [(force) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
+b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
 
@@ -59,7 +59,6 @@ for i in range(1, 11):
 
 A = create_matrix(10)
 b2 = 1/h4 * A.dot(R)
-print(b2)
 
 # Eksakt løsning for den fjerdederiverte.
 print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.00482953846153537283 -0.00482953846154242014 -0.00482953846153212022 -0.00482953846154404644 -0.00482953846152886761 -0.00482953846154513065 -0.00482953846153754123 -0.00482953846153970964]
@@ -69,14 +68,11 @@ tempx = sp.ones(segments)
 nyB1 = sp.ones(segments)
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i] * 1/h4))
-    nyB1[i] = b1[i] / h4
-
-print("nyB1: ", nyB1)
 
 print("\nOppgave 4d: ")
-print("Foroverfeil: ", np.linalg.norm(temp))
-print("Relativ foroverfeil: ", np.linalg.norm(temp)/np.linalg.norm(b2))
-print("Feilforstørring: ", (np.linalg.norm(temp, 3) / np.linalg.norm(b2, 3)) / 2 ** -52)
+print("Foroverfeil: ", np.linalg.norm(temp, np.inf))
+print("Relativ foroverfeil: ", np.linalg.norm(temp, np.inf)/np.linalg.norm(b2, np.inf))
+print("Feilforstørring: ", (np.linalg.norm(temp, np.inf) / np.linalg.norm(b2, np.inf)) / 2 ** -52)
 print("Cond(A): ", norm(A) * norm(inv(A)))
 
 print("\nOppgave 4e: ")
