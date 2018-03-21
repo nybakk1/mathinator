@@ -114,7 +114,7 @@ for i in range(1, 12):
     p = 100
     b = sp.ones(segments)
     for j in range(0, segments):
-        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * j) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
+        b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * (j+1)) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
     y = spsolve(A, b)
     if i < 9:
         Cond[i-1] = norm(A) * norm(inv(A)) * 2**-52
@@ -129,7 +129,7 @@ for i in range(1, 12):
 # pl.plot(X, R1)  # Oppgave 6b
 pl.plot(np.log(X), np.log(Z))  # Oppgave 6c and 6d
 pl.plot(np.log(X), np.log(Cond))  # Oppgave 6d
-pl.plot(np.log(X), np.log(H))  # Oppgave 6d
+pl.plot(np.log(X), np.log(H2))  # Oppgave 6d
 pl.show()
 
 
