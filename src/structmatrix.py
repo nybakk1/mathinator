@@ -4,7 +4,6 @@ import scipy as sp
 import numpy as np
 import math as ma
 import matplotlib.pyplot as pl
-import matplotlib.patches as mpatches
 from scipy.sparse import spdiags
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
@@ -39,7 +38,7 @@ print("Oppgave 3: ")
 g = 9.81        # Gravitational force in m/s^2.
 segments = 10   # Number of segments
 
-divingBoard = DivingBoard(2.00, 0.30, 0.03)
+divingBoard = DivingBoard(2.00, 0.30, 0.03)  # Initializing the divingboard.
 A = create_matrix(segments)     # Creating the A matrix
 segm_len = divingBoard.length / segments    # Length of each segment
 h4 = segm_len ** 4
@@ -48,24 +47,24 @@ b1 = [(force * h4) / (divingBoard.E * divingBoard.I)] * segments  # The b-vector
 y = spsolve(A, b1)  # Solving the matrix
 np.set_printoptions(formatter={'float': lambda y: "{0:0.20f}".format(y)})
 
-# Eksakt løsning for y
+# Exact solution for y
 print(y)  # [-0.00018062473846150817 -0.00067484750769219038 -0.00141698658461512916 -0.00234908750769186828 -0.00342092307692241438 -0.00458999335384523578 -0.00582152566153726261 -0.00708847458461388680 -0.00837152196922896080 -0.00965907692307479970]
 
 print()
-print("Oppgave 4c: ")
-R = sp.ones(segments)
+R = sp.zeros(segments)
+# Estimated solution for y
 for i in range(1, 11):
     R[i - 1] = (((force / (24 * divingBoard.E * divingBoard.I)) * (i / 5) ** 2) * ((i / 5) ** 2 - 8 * (i / 5) + 24))
 
+# Finding the exact solution for the forth derivative.
 A = create_matrix(10)
 b2 = 1/h4 * A.dot(R)
 
-# Eksakt løsning for den fjerdederiverte.
+print("Oppgave 4c: ")
 print(b2)  # [-0.00482953846153815099 -0.00482953846153943815 -0.00482953846153537283 -0.00482953846154242014 -0.00482953846153212022 -0.00482953846154404644 -0.00482953846152886761 -0.00482953846154513065 -0.00482953846153754123 -0.00482953846153970964]
 
-temp = sp.ones(segments)
-tempx = sp.ones(segments)
-nyB1 = sp.ones(segments)
+temp = sp.zeros(segments)
+# Error in the estimation of the forth derivative.
 for i in range(0, segments):
     temp[i] = (abs(b2[i] - b1[i] * 1/h4))
 
@@ -78,11 +77,14 @@ print("Cond(A): ", norm(A) * norm(inv(A)))
 print("\nOppgave 4e: ")
 print("Foroverfeil: ", np.linalg.norm(abs(R - y), np.inf)/2**-52, "maskinepsilon")
 
-err = sp.ones(11)
-Cond = sp.ones(11)
+# Array for containing the error in the point x = L. (The end of the divingboard)
+err = sp.zeros(11)
+# Array for containing the condition of the A matrix for different values of n.
+Cond = sp.zeros(11)
+
 for i in range(1, 12):
     segments = 10 * 2 ** i
-    segm_len = divingBoard.length / segments  # Length of each segment
+    segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
     if i < 9:  #
@@ -100,26 +102,26 @@ print(err)
 print("\nKondisjon:")
 print(Cond)
 
-X = sp.ones(11)
-Y = sp.ones(11)
-R1 = sp.ones(11)
-Z = sp.ones(11)
-Cond = sp.ones(11)
-H2 = sp.ones(11)
-H = sp.ones(11)
+X = sp.zeros(11)  # Number of segments in each sample.
+Y = sp.zeros(11)  # Estimated values in the point x = L.
+R1 = sp.zeros(11)  # Exact values in the point x = L.
+Z = sp.zeros(11)  # Error in the estimate in the point x = L.
+Cond = sp.zeros(11)  # Condition of the structure matrix for different values of n.
+H2 = sp.zeros(11)  # The theoretical error (h^2)
 for i in range(1, 12):
     segments = 10 * 2 ** i
     X[i-1] = segments
-    H[i - 1] = divingBoard.length / segments
     segm_len = divingBoard.length / segments
     h4 = segm_len ** 4
     A = create_matrix(segments)
     p = 100
     g = 9.81
     b = sp.ones(segments)
+    # Filling in the force acting on the diving board.
     for j in range(0, segments):
         b[j] = ((force - p * g * ma.sin((ma.pi * segm_len * (j+1)) / divingBoard.length))*h4) / (divingBoard.E * divingBoard.I)
     y = spsolve(A, b)
+    # FIlling in the condition number as far as python can handle it.
     if i < 9:
         Cond[i-1] = norm(A) * norm(inv(A)) * 2**-52
     else:
@@ -130,8 +132,9 @@ for i in range(1, 12):
     Y[i-1] = (y[-1])
     H2[i-1] = 4/(segments**2)
 
-pl.plot(X, Y, label = 'Beregnet verdi')  # Oppgave 6b
-pl.plot(X, R1, label = 'Eksakt verdi')  # Oppgave 6b
+pl.plot(X, Y, label ='Beregnet verdi')  # Oppgave 6b
+pl.plot(X, R1, label ='Eksakt verdi')  # Oppgave 6b
+# Close this window to continue code and show the next plot.
 pl.show()
 
 Y = sp.ones(11)
@@ -144,7 +147,9 @@ pl.legend(bbox_to_anchor=(1, 1),
 
 pl.show()
 
-print("Oppgave 7")
+# Excercise 7
+# A person standing at the edge of the divingboard.
+# Calculating the displacement of the beam at the end of the divingboard for different number of segments.
 for i in range(1, 12):
     segments = 10 * 2 ** i
     segm_len = divingBoard.length / segments
@@ -154,26 +159,24 @@ for i in range(1, 12):
     b = sp.ones(segments)
     segm_start = 0
     segm_stop = segm_len
-    TOL = 0.00001
+    TOL = 0.000001
     f_pers = (g * 50) / 0.3
     for j in range(0, segments):
         if segm_stop > 1.70:
-            if segm_start > 1.70:
+            if segm_start > 1.70:  # Adding the weight of the person for the end of the divingboard.
                 b[j] = ((force - f_pers) * h4) / (divingBoard.E * divingBoard.I)
-            else:
-                b[j] = ((force - (f_pers/(segm_stop - 1.7)) * h4) / (divingBoard.E * divingBoard.I))
+            else:  # A segment that has some part of the weight of the person, but not all.
+                b[j] = (((force - (f_pers/(segm_stop - 1.7))) * h4) / (divingBoard.E * divingBoard.I))
         else:
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
-
-        # if segm_stop < 1.70 + TOL and segm_stop > 1.70 - TOL:
-        if 1.70 - TOL < segm_stop < 1.70 + TOL:
+        if 1.70 - TOL < segm_stop < 1.70 + TOL:  # In case of small rounding errors.
             b[j] = ((force * h4) / (divingBoard.E * divingBoard.I))
-        if 1.70 - TOL < segm_start < 1.70 + TOL:
+        if 1.70 - TOL < segm_start < 1.70 + TOL:  # In case of small rounding errors.
             b[j] = ((force - f_pers) * h4) / (divingBoard.E * divingBoard.I)
-        segm_start += segm_len
-        segm_stop += segm_len
-    y = spsolve(A, b)
-    Y[i - 1] = y[-1]
+        segm_start += segm_len  # Incrementing the start of the segment
+        segm_stop += segm_len  # Incrementing the end of the segment
+    y = spsolve(A, b)  # Solving for the displacement.
+    Y[i - 1] = y[-1]  # Saving the displacement at the end of the divingboard.
 
 print("Oppgave 7: ")
 print(Y)
